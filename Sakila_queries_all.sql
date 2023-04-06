@@ -52,10 +52,10 @@ from film;
 -- format (hours, minutes)?
 select time_format(sec_to_time(avg(length * 60)), '%H:%i') as avg_duration FROM film;
 
-select CONCAT(
-  FLOOR(avg(length) / 60), 
+select concat(
+  floor(avg(length) / 60), 
   ':', 
-  LPAD(avg(length) % 60, 2, '0')
+  lpad(avg(length) % 60, 2, '0')
 ) as avg_duration
 from film;
 
@@ -76,7 +76,7 @@ as op_days from rental;
 -- having issues with the datediff
 select max((rental_date)) from rental;
 select min((rental_date)) from rental;
-select distinct(DATEDIFF('2006-02-14 15:16:03', '2005-05-24 22:53:30')) AS total_days
+select distinct(datediff('2006-02-14 15:16:03', '2005-05-24 22:53:30')) as total_days
 from rental;
 
 -- 7.Show rental info with additional columns
@@ -116,3 +116,62 @@ limit 10;
 select distinct special_features from film;
 select count(distinct title) from film
 where special_features = "Behind the Scenes";
+
+-- Lesson 2.6 lab
+
+-- 1. Only last names that appear once
+select last_name, count(last_name) as count from actor
+group by last_name;
+
+select last_name, count(last_name) as count
+from actor
+group by last_name
+having count = 1;
+
+-- 2. Only last names that appear more than once
+select last_name, count(last_name) as count
+from actor
+group by last_name
+having count <> 1;
+
+-- 3. Using the rental table, find out how many 
+-- rentals were processed by each employee.
+select count(rental_id) as "processed rentals",
+staff_id as staff from rental
+group by staff;
+
+-- 4. Using the film table, find out how many 
+-- films were released each year.
+select count(title), release_year from film
+group by release_year;
+
+-- 5. Using the film table, find out for each 
+-- rating how many films were there.
+select count(title), rating from film
+group by rating;
+
+-- 6. What is the mean length of the film for
+-- each rating type. Round off the average 
+-- lengths to two decimal places
+select round(avg(length), 2) as average_duration,
+rating from film
+group by rating;
+
+-- 7. Which kind of movies (rating) have a mean
+-- duration of more than two hours?
+select round(avg(length), 2) as average_duration,
+rating from film
+group by rating
+having average_duration > 120;
+
+-- 6 Rank films by length (filter out the rows 
+-- that have nulls or 0s in length column). 
+-- In your output, only select the columns title, 
+-- length, and the rank.
+SELECT title, length, rank() OVER (PARTITION BY length ORDER BY length) AS 'rank'
+FROM film
+WHERE length IS NOT NULL
+AND length <> 0
+ORDER BY length desc;
+
+
