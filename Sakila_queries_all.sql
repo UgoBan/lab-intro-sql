@@ -153,7 +153,7 @@ group by rating;
 -- 6. What is the mean length of the film for
 -- each rating type. Round off the average 
 -- lengths to two decimal places
-select round(avg(length), 2) as average_duration,
+select rating, round(avg(length), 2) as average_duration,
 rating from film
 group by rating;
 
@@ -168,11 +168,10 @@ having average_duration > 120;
 -- that have nulls or 0s in length column). 
 -- In your output, only select the columns title, 
 -- length, and the rank.
-SELECT title, length, rank() OVER (PARTITION BY length ORDER BY length) AS 'rank'
-FROM film
-WHERE length IS NOT NULL
-AND length <> 0
-ORDER BY length desc;
+SELECT title, length, dense_rank() OVER (ORDER BY length desc) as "rank"
+FROM sakila.film
+WHERE length IS NOT NULL AND length > 0;
+
 
 
 -- Lab | SQL Join (Part I)
@@ -293,7 +292,7 @@ order by count(rental_id) desc;
 
 -- 5. List the top five genres in gross 
 -- revenue in descending order.
-select name, concat('$', sum(amount)) "gross revenuw" from
+select name as 'Genre', concat('$', sum(amount)) "Gross revenuw" from
 category c
 join film_category fc
 on c.category_id = fc.category_id
@@ -321,3 +320,4 @@ FROM film_actor fa1
 JOIN film_actor fa2 ON fa1.film_id = fa2.film_id AND fa1.actor_id < fa2.actor_id
 JOIN actor a1 ON fa1.actor_id = a1.actor_id
 JOIN actor a2 ON fa2.actor_id = a2.actor_id;
+
