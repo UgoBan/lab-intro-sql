@@ -101,7 +101,7 @@ select distinct(release_year) from film;
 
 -- 10. Get all films with ARMAGEDDON in the title.
 select title from film
-where title like "ARMAGEDDON%";
+where title like "%%ARMAGEDDO%%";
 
 -- 11 Get all films which title ends with APOLLO.
 select title from film
